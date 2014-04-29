@@ -50,6 +50,11 @@ static NSString * const DFDatePickerViewMonthHeaderIdentifier = @"monthHeader";
     NSCalendar *calendar = [NSCalendar currentCalendar];
     NSDateComponents *components = [calendar components:(NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit) fromDate:[NSDate date]];
     _today = [calendar dateFromComponents:components];;
+    
+    
+    _selectedCellsArray = [[NSMutableArray alloc] init];
+    _pickedDates = [[NSMutableArray alloc] init];
+
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder
@@ -123,6 +128,7 @@ static NSString * const DFDatePickerViewMonthHeaderIdentifier = @"monthHeader";
 	return _collectionView;
 }
 
+
 - (UICollectionViewFlowLayout *)collectionViewLayout
 {
 	//	Hard key these things.
@@ -133,7 +139,7 @@ static NSString * const DFDatePickerViewMonthHeaderIdentifier = @"monthHeader";
 	if (!_collectionViewLayout) {
 		_collectionViewLayout = [UICollectionViewFlowLayout new];
 		_collectionViewLayout.headerReferenceSize = (CGSize){ 320, 64 };
-		_collectionViewLayout.itemSize = (CGSize){ 44, 70 };
+		_collectionViewLayout.itemSize = (CGSize){ 44, 44 };
 		_collectionViewLayout.minimumLineSpacing = 2.0f;
 		_collectionViewLayout.minimumInteritemSpacing = 2.0f;
 	}
@@ -348,6 +354,27 @@ static NSString * const DFDatePickerViewMonthHeaderIdentifier = @"monthHeader";
         cell.today = ([cellDate compare:_today] == NSOrderedSame) ? YES : NO;
     }
     
+
+    NSIndexPath* theindexpath = [NSIndexPath indexPathForItem:indexPath.row inSection:indexPath.section];
+
+    
+    if ( [_selectedCellsArray containsObject:theindexpath]  )
+    {
+        
+        // if first/last date use the rounded corner bg
+        
+
+        cell.backgroundColor = [UIColor colorWithRed:0/255.0f green:176/255.0f blue:175/255.0f alpha:1.0f];
+        cell.dateLabel.textColor = [UIColor whiteColor];
+        
+
+    }
+    else
+    {
+        cell.backgroundColor = [UIColor whiteColor];
+        cell.dateLabel.textColor = [UIColor colorWithRed:0.474 green:0.47 blue:0.474 alpha:1];
+    }
+
 	return cell;
 }
 
@@ -369,9 +396,88 @@ static NSString * const DFDatePickerViewMonthHeaderIdentifier = @"monthHeader";
 
 - (void) collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
-	RSDFDatePickerDayCell *cell = ((RSDFDatePickerDayCell *)[collectionView cellForItemAtIndexPath:indexPath]);
+
+    NSIndexPath* theindexpath = [NSIndexPath indexPathForItem:indexPath.row inSection:indexPath.section];
+
+	RSDFDatePickerDayCell *cell = ((RSDFDatePickerDayCell *)[collectionView cellForItemAtIndexPath:theindexpath]);
 	NSDate *selectedDate = cell ? [self.calendar dateFromComponents:[self dateComponentsFromPickerDate:cell.date]] : nil;
     [self.delegate datePickerView:self didSelectDate:selectedDate];
+    
+
+    if ([_selectedCellsArray containsObject:theindexpath]  )
+    {
+        [_selectedCellsArray removeObject:theindexpath];
+        [_pickedDates removeObject:selectedDate];
+        [[self.collectionView cellForItemAtIndexPath:theindexpath] setSelected:NO];
+
+    }
+    else
+    {
+        [_selectedCellsArray addObject:theindexpath];
+        [_pickedDates addObject:selectedDate];
+        [[self.collectionView cellForItemAtIndexPath:theindexpath] setSelected:YES];
+
+    }
+    
+    
+    
+    // get start and end date - then loop through the cells in between setting them to be selected
+    
+    NSSortDescriptor *descriptor=[[NSSortDescriptor alloc] initWithKey:@"self" ascending:NO];
+    NSArray *descriptors=[NSArray arrayWithObject: descriptor];
+    NSArray *sortedDates=[_pickedDates sortedArrayUsingDescriptors:descriptors];
+    
+    NSDate *startDate = sortedDates[sortedDates.count-1];
+    NSDate *endDate = sortedDates[0];
+    
+    NSCalendar *gregorian = [[NSCalendar alloc]
+                             initWithCalendarIdentifier:NSGregorianCalendar];
+    
+    NSUInteger unitFlags = NSMonthCalendarUnit | NSDayCalendarUnit;
+    
+    NSDateComponents *components = [gregorian components:unitFlags
+                                                fromDate:startDate
+                                                  toDate:endDate options:0];
+    
+    NSInteger days = [components day];
+    NSInteger months = [components month];
+    
+    if (months > 0) days = days + (months * 30);
+    
+    // BUG: Works for a selection e.g 1st to 15th and allows you to deselect items from end but not the start.
+    
+    NSLog(@"start: %@", startDate);
+    NSLog(@"end: %@", endDate);
+
+    
+    days++;
+    
+    NSIndexPath *firstitem = [_selectedCellsArray objectAtIndex:0];
+
+    NSLog(@"days: %i", days);
+    
+    for (int i = 0; i < days; i++) {
+        
+        NSIndexPath *newPath = [NSIndexPath indexPathForRow:firstitem.row+i
+                                                  inSection:firstitem.section];
+        
+        [_selectedCellsArray addObject:newPath];
+
+
+        [[self.collectionView cellForItemAtIndexPath:newPath] setSelected:YES];
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     [self.collectionView reloadData];
 }
 
@@ -384,8 +490,8 @@ static NSString * const DFDatePickerViewMonthHeaderIdentifier = @"monthHeader";
 		NSDateFormatter *dateFormatter = [self.calendar df_dateFormatterNamed:@"calendarMonthHeader" withConstructor:^{
 			NSDateFormatter *dateFormatter = [NSDateFormatter new];
 			dateFormatter.calendar = self.calendar;
-			dateFormatter.dateFormat = @"MMM yyyy";
-            dateFormatter.locale = [NSLocale localeWithLocaleIdentifier:@"en_US"];
+			dateFormatter.dateFormat = @"MMMM yyyy";
+            //dateFormatter.locale = [NSLocale localeWithLocaleIdentifier:@"en_US"];
 			return dateFormatter;
 		}];
 		

@@ -7,6 +7,15 @@
 
 @property (nonatomic, readwrite, weak) id<RSDFDatePickerViewDelegate> delegate;
 @property (nonatomic, readwrite, weak) id<RSDFDatePickerViewDataSource> dataSource;
+@property (nonatomic) NSMutableArray *selectedCellsArray;
+@property (nonatomic) NSMutableArray *pickedDates;
+
+
+@property (nonatomic) NSMutableArray *sections;
+
+
+
+
 
 - (void)reloadData;
 

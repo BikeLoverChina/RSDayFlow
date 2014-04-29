@@ -67,11 +67,14 @@
 - (void)setDayOff:(BOOL)dayOff
 {
     _dayOff = dayOff;
-    if (!_dayOff) {
-        self.dateLabel.textColor = [UIColor blackColor];
-    } else {
-        self.dateLabel.textColor = [UIColor colorWithRed:184/255.0f green:184/255.0f blue:184/255.0f alpha:1.0f];
-    }
+//    if (!_dayOff) {
+//        self.dateLabel.textColor = [UIColor darkGrayColor];
+//    } else {
+//        self.dateLabel.textColor = [UIColor colorWithRed:0.474 green:0.47 blue:0.474 alpha:1];
+//    }
+//    
+    self.dateLabel.textColor = [UIColor colorWithRed:0.474 green:0.47 blue:0.474 alpha:1];
+
 }
 
 - (void)setMarked:(BOOL)marked
@@ -83,39 +86,39 @@
 - (void)setCompleted:(BOOL)completed
 {
     _completed = completed;
-    if (_completed) {
-        self.markerImageView.image = [[self class] fetchObjectForKey:@"img_marker_green" withCreator:^id{
-            UIGraphicsBeginImageContextWithOptions(_markerImageView.frame.size, NO, self.window.screen.scale);
-            CGContextRef context = UIGraphicsGetCurrentContext();
-            
-            CGRect rect = _markerImageView.frame;
-            rect.origin = CGPointZero;
-            
-            CGContextSetFillColorWithColor(context, [UIColor colorWithRed:83/255.0f green:215/255.0f blue:105/255.0f alpha:1.0f].CGColor);
-            CGContextFillEllipseInRect(context, rect);
-            
-            UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
-            UIGraphicsEndImageContext();
-            
-            return image;
-        }];
-    } else {
-        self.markerImageView.image = [[self class] fetchObjectForKey:@"img_marker_gray" withCreator:^id{
-            UIGraphicsBeginImageContextWithOptions(_markerImageView.frame.size, NO, self.window.screen.scale);
-            CGContextRef context = UIGraphicsGetCurrentContext();
-            
-            CGRect rect = _markerImageView.frame;
-            rect.origin = CGPointZero;
-            
-            CGContextSetFillColorWithColor(context, [UIColor colorWithRed:184/255.0f green:184/255.0f blue:184/255.0f alpha:1.0f].CGColor);
-            CGContextFillEllipseInRect(context, rect);
-            
-            UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
-            UIGraphicsEndImageContext();
-            
-            return image;
-        }];
-    }
+//    if (_completed) {
+//        self.markerImageView.image = [[self class] fetchObjectForKey:@"img_marker_green" withCreator:^id{
+//            UIGraphicsBeginImageContextWithOptions(_markerImageView.frame.size, NO, self.window.screen.scale);
+//            CGContextRef context = UIGraphicsGetCurrentContext();
+//            
+//            CGRect rect = _markerImageView.frame;
+//            rect.origin = CGPointZero;
+//            
+//            CGContextSetFillColorWithColor(context, [UIColor colorWithRed:83/255.0f green:215/255.0f blue:105/255.0f alpha:1.0f].CGColor);
+//            CGContextFillEllipseInRect(context, rect);
+//            
+//            UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+//            UIGraphicsEndImageContext();
+//            
+//            return image;
+//        }];
+//    } else {
+//        self.markerImageView.image = [[self class] fetchObjectForKey:@"img_marker_gray" withCreator:^id{
+//            UIGraphicsBeginImageContextWithOptions(_markerImageView.frame.size, NO, self.window.screen.scale);
+//            CGContextRef context = UIGraphicsGetCurrentContext();
+//            
+//            CGRect rect = _markerImageView.frame;
+//            rect.origin = CGPointZero;
+//            
+//            CGContextSetFillColorWithColor(context, [UIColor colorWithRed:184/255.0f green:184/255.0f blue:184/255.0f alpha:1.0f].CGColor);
+//            CGContextFillEllipseInRect(context, rect);
+//            
+//            UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+//            UIGraphicsEndImageContext();
+//            
+//            return image;
+//        }];
+//    }
 }
 
 - (void)setToday:(BOOL)today
@@ -124,8 +127,8 @@
     if (!_today) {
         self.dateLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:18.0f];
     } else {
-        self.dateLabel.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:19.0f];
-        self.dateLabel.textColor = [UIColor whiteColor];
+        //self.dateLabel.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:19.0f];
+        //self.dateLabel.textColor = [UIColor whiteColor];
     }
     self.todayImageView.hidden = !_today;
 }
@@ -151,8 +154,8 @@
             CGRect rect = _todayImageView.frame;
             rect.origin = CGPointZero;
             
-            CGContextSetFillColorWithColor(context, [UIColor colorWithRed:0/255.0f green:121/255.0f blue:255/255.0f alpha:1.0f].CGColor);
-            CGContextFillEllipseInRect(context, rect);
+//            CGContextSetFillColorWithColor(context, [UIColor colorWithRed:0/255.0f green:121/255.0f blue:255/255.0f alpha:1.0f].CGColor);
+//            CGContextFillEllipseInRect(context, rect);
             
             UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
             UIGraphicsEndImageContext();
@@ -174,7 +177,8 @@
         _dividerTopImageView.image = [[self class] fetchObjectForKey:@"img_divider_top" withCreator:^id{
             UIGraphicsBeginImageContextWithOptions(_dividerTopImageView.frame.size, NO, self.window.screen.scale);
             CGContextRef context = UIGraphicsGetCurrentContext();
-            CGContextSetFillColorWithColor(context, [UIColor colorWithRed:200/255.0f green:200/255.0f blue:200/255.0f alpha:1.0f].CGColor);
+            CGContextSetFillColorWithColor(context, [UIColor colorWithWhite:0.9f
+                                                                      alpha:1.0f].CGColor);
             CGContextFillRect(context, _dividerTopImageView.frame);
             UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
             UIGraphicsEndImageContext();
